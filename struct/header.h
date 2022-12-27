@@ -6,7 +6,7 @@
 #define DNS_CLIENT_HEADER_H
 
 #include <vector>
-#include "question.h"
+#include "query.h"
 #include "response.h"
 #include "OpCode.h"
 
@@ -28,7 +28,7 @@
 
 class Header {
 private:
-    uint8_t m_id;
+    uint16_t m_id;
 
     bool m_isResponse{false}; // QR
     OpCode m_opCode{OpCode::QUERY};
@@ -38,11 +38,7 @@ private:
     bool m_ra{false};
     char m_z = {0x00};
     char m_rCode{0x00};
-//    short m_QDCount;
-//    short m_ANCount;
-//    short m_NSCount;
-//    short m_ARCount;
-    std::vector<QuestionPtr> m_questions;
+    std::vector<QueryPtr> m_questions;
     std::vector<ResponsePtr> m_answers;
     std::vector<ResponsePtr> m_authority;
     std::vector<ResponsePtr> m_additional;
@@ -50,9 +46,9 @@ private:
 public:
     Header();
 
-    uint8_t getId() const;
+    uint16_t getId() const;
 
-    void setId(uint8_t mId);
+    void setId(uint16_t mId);
 
     bool isResponse() const;
 
@@ -86,7 +82,9 @@ public:
 
     void setRCode(char rCode);
 
-    void addQuestion(QuestionPtr question);
+    void addQuery(QueryPtr query);
+
+    Query *getQuery(int idx);
 //    void addAnswer();
 //    void addAuthority();
 //    void addAdditional();

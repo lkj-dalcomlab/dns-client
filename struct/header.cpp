@@ -6,11 +6,11 @@
 
 Header::Header() {}
 
-uint8_t Header::getId() const {
+uint16_t Header::getId() const {
     return m_id;
 }
 
-void Header::setId(uint8_t mId) {
+void Header::setId(uint16_t mId) {
     m_id = mId;
 }
 
@@ -96,8 +96,12 @@ uint8_t Header::getARCount() {
     return m_additional.size();
 }
 
-void Header::addQuestion(QuestionPtr question) {
-    m_questions.push_back(std::move(question));
+void Header::addQuery(QueryPtr query) {
+    m_questions.push_back(std::move(query));
+}
+
+Query *Header::getQuery(int idx) {
+    return m_questions.at(idx).get();
 }
 
 

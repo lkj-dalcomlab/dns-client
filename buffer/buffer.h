@@ -25,7 +25,7 @@ public:
     void consumeReadableBytes(uint64_t bytes);
 };
 
-using BufferSPtr = std::shared_ptr<Buffer>;
+using BufferPtr = std::unique_ptr<Buffer>;
 
 
 #endif //DNS_CLIENT_BUFFER_H

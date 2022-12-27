@@ -5,16 +5,17 @@
 #ifndef DNS_CLIENT_PACKETBUILDER_H
 #define DNS_CLIENT_PACKETBUILDER_H
 
-
-#include "struct/packet.h"
-#include "struct/header.h"
+#include "../struct/packet.h"
+#include "../struct/header.h"
+#include "../buffer/buffer.h"
 
 class PacketBuilder {
 public:
-    PacketPtr build(Header* header);
+    BufferPtr build(Header* header);
 
 private:
-    unsigned long flagsToLong(Header* header);
+    uint16_t flagsToLong(Header* header);
+    std::vector<char> nameToQName(const String &name);
 };
 
 

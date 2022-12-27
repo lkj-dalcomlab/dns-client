@@ -6,30 +6,32 @@
 #define DNS_CLIENT_RESPONSE_H
 
 
-#include "question.h"
+#include "query.h"
 
 class Response {
 private:
-    QuestionPtr m_question;
-    uint8_t m_ttl{0};
-    uint8_t m_resDataLen{0};
-    char* m_data;
+    QueryPtr m_query{nullptr};
+    uint32_t m_ttl{0};
+    uint16_t m_resDataLen{0};
+    String m_data;
 public:
     Response();
 
-    const QuestionPtr &getQuestion() const;
+    void setQuery(QueryPtr mQuestion);
 
-    uint8_t getTtl() const;
+    const Query *getQuestion() const;
 
-    void setTtl(uint8_t ttl);
+    uint32_t getTtl() const;
 
-    uint8_t getResDataLen() const;
+    void setTtl(uint32_t ttl);
 
-    void setResDataLen(uint8_t resDataLen);
+    uint16_t getResDataLen() const;
 
-    char *getData() const;
+    void setResDataLen(uint16_t resDataLen);
 
-    void setData(char *data);
+    String getData() const;
+
+    void setData(String data);
 };
 
 using ResponsePtr = std::unique_ptr<Response>;

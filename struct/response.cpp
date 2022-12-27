@@ -4,34 +4,34 @@
 
 #include "response.h"
 
-Response::Response() {
-    m_question = std::make_unique<Question>("");
+void Response::setQuery(QueryPtr query) {
+    m_query = std::move(query);
 }
 
-const QuestionPtr &Response::getQuestion() const {
-    return m_question;
+const Query *Response::getQuestion() const {
+    return m_query.get();
 }
 
-uint8_t Response::getTtl() const {
+uint32_t Response::getTtl() const {
     return m_ttl;
 }
 
-void Response::setTtl(uint8_t ttl) {
+void Response::setTtl(uint32_t ttl) {
     m_ttl = ttl;
 }
 
-uint8_t Response::getResDataLen() const {
+uint16_t Response::getResDataLen() const {
     return m_resDataLen;
 }
 
-void Response::setResDataLen(uint8_t resDataLen) {
+void Response::setResDataLen(uint16_t resDataLen) {
     m_resDataLen = resDataLen;
 }
 
-char *Response::getData() const {
+String Response::getData() const {
     return m_data;
 }
 
-void Response::setData(char *data) {
+void Response::setData(String data) {
     m_data = data;
 }

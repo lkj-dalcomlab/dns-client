@@ -12,8 +12,8 @@ FetchContent_declare(
 FetchContent_MakeAvailable(spdlog)
 
 add_executable(dns_client main.cpp struct/header.cpp struct/header.h struct/OpCode.h headerbuilder.cpp headerbuilder.h
-        struct/question.cpp struct/question.h struct/String.h struct/QType.h struct/QClass.h struct/response.cpp struct/response.h
-        struct/packet.cpp struct/packet.h packetbuilder.cpp packetbuilder.h net/reactor.h net/IoHandler.h
-        net/socket.h net/clientsocket.h net/clientsocket.cpp logger/logger.h logger/logger.cpp buffer/buffer.cpp buffer/buffer.h buffer/bufferexception.cpp buffer/bufferexception.h net/reactorpoll.cpp net/reactorpoll.h net/Client.h promise/promise.h promise/promiseimpl.cpp promise/promiseimpl.h buffer/bufferlistener.h net/closelistener.h net/clientimpl.cpp net/clientimpl.h packet/packetwritelistener.h)
+        struct/query.cpp struct/query.h struct/String.h struct/QType.h struct/QClass.h struct/response.cpp struct/response.h
+        struct/packet.cpp struct/packet.h packet/packetbuilder.cpp packet/packetbuilder.h logger/logger.h logger/logger.cpp
+        buffer/buffer.cpp buffer/buffer.h buffer/bufferexception.cpp packet/packetwritelistener.h net/socket.cpp net/socket.h packet/packetparser.cpp packet/packetparser.h packet/queryparser.cpp packet/queryparser.h packet/qnameparser.cpp packet/qnameparser.h packet/responseparser.cpp packet/responseparser.h)
 target_link_libraries(dns_client PRIVATE spdlog)
 target_include_directories(dns_client PRIVATE logger)
