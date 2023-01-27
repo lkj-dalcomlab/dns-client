@@ -1,21 +1,19 @@
 //
-// Created by lkj on 2022/12/05.
+// Created by lkj on 2022/12/01.
 //
 
 #ifndef DNS_CLIENT_PACKETBUILDER_H
 #define DNS_CLIENT_PACKETBUILDER_H
 
-#include "../struct/packet.h"
-#include "../struct/header.h"
-#include "../buffer/buffer.h"
+
+#include "struct/packet.h"
+#include <string>
 
 class PacketBuilder {
-public:
-    BufferPtr build(Header* header);
-
 private:
-    uint16_t flagsToLong(Header* header);
-    std::vector<char> nameToQName(const String &name);
+    static uint8_t m_id;
+public:
+    PacketPtr build(const std::string &domain, RecordType type);
 };
 
 

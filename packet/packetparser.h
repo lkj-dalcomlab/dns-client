@@ -6,14 +6,16 @@
 #define DNS_CLIENT_PACKETPARSER_H
 
 
-#include "../struct/packet.h"
-#include "../buffer/buffer.h"
-#include "../struct/header.h"
+#include "struct/packet.h"
+#include "buffer/buffer.h"
+#include "struct/packet.h"
 #include "queryparser.h"
+#include "responseparser.h"
 
 class PacketParser {
 private:
     enum class State {
+        INIT,
         HEADER_BYTES,
         TRANSACTION_ID,
         FLAGS,
@@ -21,11 +23,12 @@ private:
         QUERY,
         ANSWER,
         AUTHORITY,
-        ADDITIONAL
+        ADDITIONAL,
+        END
     };
-    State m_state{State::HEADER_BYTES};
+    State m_state{State::INIT};
     BufferPtr m_buffer{nullptr};
-    HeaderPtr m_header;
+    PacketPtr m_packet{nullptr};
     std::vector<char> m_headerBytes;
     uint16_t m_qCount{0};
     uint16_t m_anCount{0};
@@ -33,11 +36,13 @@ private:
     uint16_t m_arCount{0};
 
     QueryParser m_queryParser;
+    ResponseParser m_responseParser;
 
 public:
-    PacketParser();
+    PacketPtr parse(BufferPtr buffer);
 
-    HeaderPtr parse(BufferPtr buffer);
+protected:
+    void init();
     void saveHeaderBytes();
     void parseTransactionId();
     void parseFlags();

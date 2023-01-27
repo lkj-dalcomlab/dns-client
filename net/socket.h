@@ -6,7 +6,7 @@
 #define DNS_CLIENT_SOCKET_H
 
 
-#include "../struct/String.h"
+#include "../packet//struct/String.h"
 
 class Socket {
 private:

@@ -2,8 +2,8 @@
 // Created by lkj on 2022/11/30.
 //
 
-#ifndef DNS_CLIENT_HEADER_H
-#define DNS_CLIENT_HEADER_H
+#ifndef DNS_CLIENT_PACKET_H
+#define DNS_CLIENT_PACKET_H
 
 #include <vector>
 #include "query.h"
@@ -26,7 +26,7 @@
 //    |                    ARCOUNT                    |
 //    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
-class Header {
+class Packet {
 private:
     uint16_t m_id;
 
@@ -38,13 +38,13 @@ private:
     bool m_ra{false};
     char m_z = {0x00};
     char m_rCode{0x00};
-    std::vector<QueryPtr> m_questions;
-    std::vector<ResponsePtr> m_answers;
+    std::vector<QueryPtr> m_queryList;
+    std::vector<ResponsePtr> m_responses;
     std::vector<ResponsePtr> m_authority;
     std::vector<ResponsePtr> m_additional;
 
 public:
-    Header();
+    Packet();
 
     uint16_t getId() const;
 
@@ -83,11 +83,16 @@ public:
     void setRCode(char rCode);
 
     void addQuery(QueryPtr query);
+    Query *getQuery(uint16_t idx);
 
-    Query *getQuery(int idx);
-//    void addAnswer();
-//    void addAuthority();
-//    void addAdditional();
+    void addResponse(ResponsePtr response);
+    Response *getResponse(uint16_t idx);
+
+    void addAuthority(ResponsePtr response);
+    Response *getAuthority(uint16_t idx);
+
+    void addAdditional(ResponsePtr response);
+    Response *getAdditional(uint16_t idx);
 
     uint8_t getQDCount();
     uint8_t getANCount();
@@ -95,6 +100,6 @@ public:
     uint8_t getARCount();
 };
 
-using HeaderPtr = std::unique_ptr<Header>;
+using PacketPtr = std::unique_ptr<Packet>;
 
-#endif //DNS_CLIENT_HEADER_H
+#endif //DNS_CLIENT_PACKET_H

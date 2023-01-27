@@ -10,19 +10,21 @@
 
 class Buffer {
 private:
-    const char* m_buf;
-    uint64_t m_bufSize{0};
-    uint64_t m_index{0};
+    const char* m_buf{nullptr};
+    uint16_t m_bufSize{0};
+    uint16_t m_index{0};
 public:
-    Buffer(const char *buf, uint64_t bufSize);
     ~Buffer();
     bool hasNext();
+    char current();
     char get();
-    uint64_t getIndex();
-    void setIndex(uint64_t idx);
+    uint16_t getIndex();
+    void setIndex(uint16_t idx);
     const char* getReadableData();
-    uint64_t getReadableBytes();
-    void consumeReadableBytes(uint64_t bytes);
+    uint16_t getReadableBytes();
+
+    void appendBuffer(const char *buf, uint16_t bufSize);
+    void clear();
 };
 
 using BufferPtr = std::unique_ptr<Buffer>;

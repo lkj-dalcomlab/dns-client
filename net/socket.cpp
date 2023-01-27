@@ -4,11 +4,16 @@
 
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <unistd.h>
 #include "socket.h"
 #include "logger.h"
 
 Socket::Socket() {
     m_sockFd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    timeval tv;
+    tv.tv_sec = 5;
+    tv.tv_usec = 0;
+    setsockopt(m_sockFd, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(timeval));
     LOG_INFO("socket create[{}]", m_sockFd);
 }
 
@@ -34,9 +39,11 @@ bool Socket::connect(const String &ip, int port) {
 
 int Socket::read(char *buf, uintmax_t size) {
     memset(buf, 0x00, size);
-    return recv(m_sockFd, buf, size, MSG_DONTWAIT);
+//    return recv(m_sockFd, buf, size, MSG_DONTWAIT);
+    return ::read(m_sockFd, buf, size);
 }
 
 int Socket::write(const char *buf, uintmax_t size) {
-    return send(m_sockFd, buf, size, MSG_DONTWAIT);
+//    return send(m_sockFd, buf, size, MSG_DONTWAIT);
+    return ::write(m_sockFd, buf, size);
 }

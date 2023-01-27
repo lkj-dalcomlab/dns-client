@@ -11,12 +11,15 @@ QueryPtr QueryParser::parse(Buffer *buffer) {
     m_buffer = buffer;
     while (buffer->hasNext()) {
         switch (m_state) {
-            case State::QNAME_BYTES:
-                saveQNameBytes();
-                break;
+//            case State::QNAME_BYTES:
+//                saveQNameBytes();
+//                break;
             case State::QNAME:
                 parseQName();
                 break;
+//            case State::QNAME_OFFSET:
+//                parseQNameOffset();
+//                break;
             case State::QTYPE:
                 parseQType();
                 break;
@@ -24,7 +27,7 @@ QueryPtr QueryParser::parse(Buffer *buffer) {
                 parseQClass();
                 break;
             case State::END:
-                m_state = State::QNAME_BYTES;
+                m_state = State::QNAME;
                 return std::move(m_query);
         }
     }
@@ -32,7 +35,14 @@ QueryPtr QueryParser::parse(Buffer *buffer) {
 }
 
 void QueryParser::saveQNameBytes() {
-    char c = m_buffer->get();
+    unsigned char c = m_buffer->get();
+
+    if (m_bytes.empty() && (c & 0xc0) == 0xc0) {
+        m_bytes.push_back(c & 0x3f);
+        m_state = State::QNAME_OFFSET;
+        return;
+    }
+
     if (c == 0x00) {
         m_state = State::QNAME;
         return;
@@ -41,23 +51,47 @@ void QueryParser::saveQNameBytes() {
 }
 
 void QueryParser::parseQName() {
-    String qname;
-    uint8_t size = m_bytes[0];
-    for (auto idx = 0; idx < m_bytes.size(); ++idx) {
-        qname += m_bytes[idx];
-        --size;
-
-        if (m_bytes.size() == idx + 1) {
-            break;
-        }
-
-        if (size == 0) {
-            size = m_bytes[idx];
-        }
+    auto qname = m_queryNameParser.parse(m_buffer);
+    if (qname.empty()) {
+        return;
     }
-    m_bytes.clear();
+//    String qname;
+//    uint8_t size = m_bytes[0];
+//    for (auto idx = 1; idx < m_bytes.size(); ++idx) {
+//        qname += m_bytes[idx];
+//        --size;
+//
+//        if (m_bytes.size() == idx + 1) {
+//            break;
+//        }
+//
+//        if (size == 0) {
+//            ++idx;
+//            size = m_bytes[idx];
+//            qname += '.';
+//        }
+//    }
+//    m_bytes.clear();
     m_query = std::make_unique<Query>(qname);
+//
+//    if (m_tempOffset != 0) {
+//        m_buffer->setIndex(m_tempOffset);
+//        m_tempOffset = 0;
+//    }
+
     m_state = State::QTYPE;
+}
+
+void QueryParser::parseQNameOffset() {
+    m_query = std::make_unique<Query>();
+
+    uint16_t offset = (m_bytes[0] << 8) + (m_buffer->get());
+    m_tempOffset = m_buffer->getIndex();
+    m_buffer->setIndex(offset);
+//    m_query->setNameOffset(offset);
+    m_bytes.clear();
+
+//    m_state = State::QNAME_BYTES;
 }
 
 void QueryParser::parseQType() {
@@ -65,7 +99,7 @@ void QueryParser::parseQType() {
         m_bytes.push_back(m_buffer->get());
         return;
     }
-    m_query->setQType((QType)((m_bytes[0] & 0xff) & (m_bytes[1] << 8 & 0xff)));
+    m_query->setQType((RecordType)((m_bytes[0] << 8) + (m_bytes[1])));
     m_bytes.clear();
     m_state = State::QCLASS;
 }
@@ -75,7 +109,7 @@ void QueryParser::parseQClass() {
         m_bytes.push_back(m_buffer->get());
         return;
     }
-    m_query->setQClass((QClass)((m_bytes[0] & 0xff) & (m_bytes[1] << 8 & 0xff)));
+    m_query->setQClass((QClass)((m_bytes[0] << 8) + (m_bytes[1])));
     m_bytes.clear();
     m_state = State::END;
 }

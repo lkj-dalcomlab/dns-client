@@ -7,31 +7,26 @@
 
 
 #include "query.h"
+#include "Record.h"
+#include <vector>
 
 class Response {
 private:
     QueryPtr m_query{nullptr};
     uint32_t m_ttl{0};
-    uint16_t m_resDataLen{0};
-    String m_data;
+    RecordPtr m_record{nullptr};
 public:
-    Response();
+    void setQuery(QueryPtr query);
 
-    void setQuery(QueryPtr mQuestion);
-
-    const Query *getQuestion() const;
+    const Query *getQuery() const;
 
     uint32_t getTtl() const;
 
     void setTtl(uint32_t ttl);
 
-    uint16_t getResDataLen() const;
+    Record *getRecord() const;
 
-    void setResDataLen(uint16_t resDataLen);
-
-    String getData() const;
-
-    void setData(String data);
+    void setRecord(RecordPtr record);
 };
 
 using ResponsePtr = std::unique_ptr<Response>;

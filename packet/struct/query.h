@@ -6,25 +6,33 @@
 #define DNS_CLIENT_QUERY_H
 
 #include "String.h"
-#include "QType.h"
+#include "RecordType.h"
 #include "QClass.h"
+#include <memory>
 
 class Query {
 private:
-    String m_name;
-    QType m_qType{QType::A};
+    String m_name{""};
+    uint16_t m_offset{0};
+    RecordType m_qType{RecordType::A};
     QClass m_qClass{QClass::IN};
 
 public:
+    Query();
+
     explicit Query(const String &name);
 
     const String &getName() const;
 
     void setName(const String &name);
 
-    QType getQType() const;
+//    uint16_t getNameOffset() const;
+//
+//    void setNameOffset(uint16_t offset);
 
-    void setQType(QType qType);
+    RecordType getQType() const;
+
+    void setQType(RecordType qType);
 
     QClass getQClass() const;
 

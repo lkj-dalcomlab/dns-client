@@ -7,13 +7,15 @@
 
 
 #include <vector>
-#include "../struct/query.h"
-#include "../buffer/buffer.h"
+#include "struct/query.h"
+#include "buffer/buffer.h"
+#include "querynameparser.h"
 
 class QueryParser {
     enum class State {
-        QNAME_BYTES,
+//        QNAME_BYTES,
         QNAME,
+        QNAME_OFFSET,
         DOUBLE_BYTES,
         QTYPE,
         QCLASS,
@@ -21,9 +23,12 @@ class QueryParser {
     };
 private:
     QueryPtr m_query;
+    QueryNameParser m_queryNameParser;
     Buffer *m_buffer;
+
+    uint16_t m_tempOffset;
     std::vector<char> m_bytes;
-    State m_state{State::QNAME_BYTES};
+    State m_state{State::QNAME};
 public:
     QueryParser();
 
@@ -31,6 +36,7 @@ public:
 private:
     void saveQNameBytes();
     void parseQName();
+    void parseQNameOffset();
     void parseQType();
     void parseQClass();
 };

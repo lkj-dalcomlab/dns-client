@@ -1,29 +1,32 @@
-#include "headerbuilder.h"
-#include "packet/packetbuilder.h"
-#include "net/socket.h"
+#include "dnsclient.h"
+#include <iostream>
 
-int main() {
-    HeaderBuilder headerBuilder;
-    auto header = headerBuilder.build("www.dalcomlab.com");
+int main(int args, char **argv) {
+    DnsClient client;
+    String input{""};
+    String record{""};
+    while(input != "exit") {
+        try {
+            std::cout << "search domain :";
+            std::cin >> input;
+            if (input.empty()) {
+                continue;
+            }
+            std::cout << "record type :";
+            std::cin >> record;
+            if (input.empty()) {
+                continue;
+            }
 
-    PacketBuilder packetBuilder;
-    auto buffer = packetBuilder.build(header.get());
+            auto addList = client.findAddress(/*"168.126.63.1"*/argv[1], input, record);
+            for (const auto &address: addList) {
+                std::cout << address->toString() << std::endl;
+            }
+            input = "";
 
-    auto socket = std::make_unique<Socket>();
-    if (!socket->connect("168.126.63.1", 53)) {
-        return 0;
-    }
-
-    int write = 0;
-    while (buffer->getReadableBytes() > 0) {
-        write += socket->write(buffer->getReadableData(), buffer->getReadableBytes());
-        buffer->setIndex(buffer->getIndex() + write);
-    }
-    char buf[1024] = {0,};
-
-    int read = socket->read(buf, 1024);
-    while (read <= -1) {
-        read = socket->read(buf, 1024);
+        } catch (std::runtime_error e) {
+            e.what();
+        }
     }
     return 0;
 }
